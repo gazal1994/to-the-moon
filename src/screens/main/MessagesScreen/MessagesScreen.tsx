@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  SafeAreaView,
   FlatList,
   TouchableOpacity,
   TextInput,
@@ -12,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { apiClient } from '../../../services/apiClient';
 import { useUser } from '../../../contexts/UserContext';
@@ -60,8 +60,11 @@ const MessagesScreen: React.FC = () => {
     try {
       setLoading(true);
       const response = await apiClient.get('/messages/conversations');
-      if (response.data.success) {
-        setConversations(response.data.data);
+      if (response.success && response.data) {
+        // response.data is the actual API response { success, data }
+        if (response.data.success) {
+          setConversations(response.data.data);
+        }
       }
     } catch (error) {
       console.error('Failed to load conversations:', error);
@@ -74,7 +77,7 @@ const MessagesScreen: React.FC = () => {
   const loadMessages = async (conversationId: number) => {
     try {
       const response = await apiClient.get(`/messages/conversations/${conversationId}/messages`);
-      if (response.data.success) {
+      if (response.success && response.data && response.data.success) {
         setMessages(response.data.data.data);
         // Mark messages as read
         response.data.data.data.forEach((msg: Message) => {
@@ -109,7 +112,7 @@ const MessagesScreen: React.FC = () => {
         type: 'text'
       });
 
-      if (response.data.success) {
+      if (response.success && response.data && response.data.success) {
         setMessages([...messages, response.data.data]);
         setMessageText('');
         loadConversations(); // Refresh conversation list
