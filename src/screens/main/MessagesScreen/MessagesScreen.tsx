@@ -13,7 +13,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import apiClient from '../../../services/apiClient';
+import { apiClient } from '../../../services/apiClient';
 import { useUser } from '../../../contexts/UserContext';
 import { styles } from './MessagesScreen.styles';
 
