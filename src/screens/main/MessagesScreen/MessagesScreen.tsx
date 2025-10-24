@@ -13,9 +13,19 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { apiClient } from '../../../services/apiClient';
 import { useUser } from '../../../contexts/UserContext';
 import { styles } from './MessagesScreen.styles';
+
+type MessagesScreenRouteProp = RouteProp<
+  { 
+    Messages: { 
+      openConversation?: Conversation 
+    } 
+  },
+  'Messages'
+>;
 
 interface Conversation {
   id: number;
@@ -44,6 +54,7 @@ interface Message {
 
 const MessagesScreen: React.FC = () => {
   const { user } = useUser();
+  const route = useRoute<MessagesScreenRouteProp>();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -55,6 +66,14 @@ const MessagesScreen: React.FC = () => {
   useEffect(() => {
     loadConversations();
   }, []);
+
+  // Handle opening conversation from navigation params
+  useEffect(() => {
+    if (route.params?.openConversation) {
+      setSelectedConversation(route.params.openConversation);
+      loadMessages(route.params.openConversation.id);
+    }
+  }, [route.params?.openConversation]);
 
   const loadConversations = async () => {
     try {

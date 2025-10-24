@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { useRTL } from '../../../hooks/useRTL';
+import { apiClient } from '../../../services/apiClient';
 import { styles } from './UserProfileScreen.styles';
 import { COLORS } from '../../../constants';
 
@@ -40,6 +41,36 @@ const UserProfileScreen: React.FC = () => {
   const route = useRoute<UserProfileScreenRouteProp>();
   const { user } = route.params;
   const { isRTL: isRTLLayout, textAlign, flexDirection } = useRTL();
+
+  const handleSendMessage = async () => {
+    try {
+      // Navigate to Messages tab and open conversation
+      // First, send an initial message to create the conversation
+      const response = await apiClient.post('/messages', {
+        receiverId: user.id,
+        content: `Hi ${user.name}! I'd like to connect with you.`,
+        type: 'text'
+      });
+
+      if (response.success && response.data) {
+        // Navigate to the Messages screen
+        // @ts-ignore - navigation type issue
+        navigation.navigate('Messages', { 
+          openConversation: {
+            id: user.id,
+            otherUser: {
+              id: user.id,
+              name: user.name,
+              avatar: user.avatar,
+              role: user.role.toLowerCase()
+            }
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Failed to start conversation:', error);
+    }
+  };
 
   const getCountryFlag = (country: string) => {
     const countryFlags: { [key: string]: string } = {
@@ -258,7 +289,10 @@ const UserProfileScreen: React.FC = () => {
             </TouchableOpacity>
           )}
           
-          <TouchableOpacity style={styles.secondaryButton}>
+          <TouchableOpacity 
+            style={styles.secondaryButton}
+            onPress={handleSendMessage}
+          >
             <Text style={[styles.secondaryButtonText, { textAlign: 'center' }]}>{t('profile.sendMessage')}</Text>
           </TouchableOpacity>
         </View>
