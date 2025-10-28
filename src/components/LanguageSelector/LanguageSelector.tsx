@@ -58,9 +58,26 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     }
   };
 
-  const currentLanguageName = availableLanguages.find(lang => lang.code === currentLanguage)?.nativeName || 'English';
+  // Safety check: ensure availableLanguages is an array
+  const safeAvailableLanguages = Array.isArray(availableLanguages) && availableLanguages.length > 0 
+    ? availableLanguages 
+    : [
+        { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
+        { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
+      ];
+  
+  // Debug logging
+  console.log('🔍 LanguageSelector Debug:', {
+    availableLanguages,
+    safeAvailableLanguages,
+    length: safeAvailableLanguages.length,
+    currentLanguage
+  });
+  
+  const currentLanguageName = safeAvailableLanguages.find(lang => lang.code === currentLanguage)?.nativeName || 'English';
 
   const renderLanguageItem = ({ item }: { item: any }) => {
+    console.log('📝 Rendering language item:', item);
     if (!item || !item.code) {
       console.warn('LanguageSelector: Invalid language item:', item);
       return null;
@@ -129,10 +146,20 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             </View>
             
             <FlatList
-              data={availableLanguages}
+              data={safeAvailableLanguages}
               renderItem={renderLanguageItem}
               keyExtractor={(item) => item.code}
               style={styles.languageList}
+              ListEmptyComponent={() => (
+                <View style={{ padding: 20, alignItems: 'center' }}>
+                  <Text style={{ fontSize: 16, color: '#666' }}>
+                    No languages available
+                  </Text>
+                  <Text style={{ fontSize: 12, color: '#999', marginTop: 8 }}>
+                    Available: {JSON.stringify(availableLanguages)}
+                  </Text>
+                </View>
+              )}
             />
           </View>
         </View>

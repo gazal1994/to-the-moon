@@ -1,0 +1,218 @@
+import { StyleSheet } from 'react-native';
+
+export const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    width: '100%',
+    maxWidth: 500,
+    maxHeight: '88%',
+    minHeight: 500,
+    flexDirection: 'column',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  closeButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeText: {
+    fontSize: 22,
+    color: '#666',
+    fontWeight: 'bold',
+  },
+  teacherInfo: {
+    padding: 20,
+    backgroundColor: '#f5f7fa',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  teacherName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+    marginBottom: 6,
+  },
+  teacherRate: {
+    fontSize: 16,
+    color: '#0a66c2',
+    fontWeight: '600',
+  },
+  slotsContainer: {
+    flex: 1,
+    minHeight: 200,
+  },
+  slotsContent: {
+    paddingTop: 24,
+    paddingHorizontal: 24,
+    paddingBottom: 32,
+  },
+  loadingContainer: {
+    padding: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 18,
+    color: '#666',
+  },
+  daySection: {
+    marginBottom: 20,
+  },
+  dayLabel: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+    marginBottom: 12,
+  },
+  timeSlotsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginHorizontal: -4,
+  },
+  timeSlotWrapper: {
+    paddingHorizontal: 4,
+    paddingVertical: 4,
+  },
+  timeSlot: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#0a66c2',
+    backgroundColor: '#fff',
+    minWidth: 85,
+    alignItems: 'center',
+  },
+  timeSlotUnavailable: {
+    borderColor: '#e0e0e0',
+    backgroundColor: '#f5f5f5',
+  },
+  timeSlotSelected: {
+    backgroundColor: '#0a66c2',
+    borderColor: '#0a66c2',
+  },
+  timeSlotWithRequest: {
+    backgroundColor: '#4A90E2',
+    borderColor: '#4A90E2',
+  },
+  timeSlotText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#0a66c2',
+  },
+  timeSlotTextUnavailable: {
+    color: '#999',
+  },
+  timeSlotTextSelected: {
+    color: '#fff',
+  },
+  timeSlotTextWithRequest: {
+    color: '#fff',
+  },
+  selectedInfo: {
+    padding: 14,
+    backgroundColor: '#e7f3ff',
+    marginHorizontal: 24,
+    marginBottom: 20,
+    borderRadius: 10,
+  },
+  selectedText: {
+    fontSize: 15,
+    color: '#0a66c2',
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+  },
+  cancelButton: {
+    flex: 1,
+    padding: 18,
+    borderRadius: 12,
+    backgroundColor: '#f0f0f0',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  cancelButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#666',
+  },
+  confirmButton: {
+    flex: 1,
+    padding: 18,
+    borderRadius: 12,
+    backgroundColor: '#0a66c2',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  confirmButtonDisabled: {
+    backgroundColor: '#d7e3f2',
+  },
+  confirmButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  confirmButtonTextDisabled: {
+    color: '#8095b2',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 60,
+    paddingHorizontal: 30,
+  },
+  emptyIcon: {
+    fontSize: 56,
+    marginBottom: 16,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  emptyText: {
+    fontSize: 15,
+    color: '#666',
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+});

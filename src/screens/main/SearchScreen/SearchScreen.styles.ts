@@ -187,18 +187,43 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
 
+  // Loading State
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 14,
+    color: '#666666',
+    fontWeight: '400',
+  },
+
   // Empty State
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 60,
+    paddingHorizontal: 32,
+  },
+  emptyEmoji: {
+    fontSize: 64,
+    marginBottom: 16,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#000000',
+    marginBottom: 8,
   },
   emptyText: {
-    fontSize: FONT_SIZES.lg,
-    color: COLORS.textSecondary,
+    fontSize: 14,
+    color: '#666666',
     textAlign: 'center',
-    marginBottom: 20,
+    lineHeight: 20,
   },
   loader: {
     marginTop: 20,
@@ -262,6 +287,7 @@ export const styles = StyleSheet.create({
     padding: 24,
     width: '92%',
     maxWidth: 400,
+    maxHeight: '80%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
@@ -269,6 +295,9 @@ export const styles = StyleSheet.create({
     elevation: 8,
     borderWidth: 1,
     borderColor: '#e5e5e5',
+  },
+  modalScroll: {
+    maxHeight: 400,
   },
   modalTitle: {
     fontSize: 20,

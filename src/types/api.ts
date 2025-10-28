@@ -43,8 +43,14 @@ export interface RegisterRequest {
   name: string;
   email: string;
   password: string;
-  role: string;
+  role: 'student' | 'teacher';
   phone?: string;
+  country?: string;
+  city?: string;
+  subjects?: string[];
+  bio?: string;
+  experience?: string;
+  hourlyRate?: number;
 }
 
 export interface VerificationRequest {

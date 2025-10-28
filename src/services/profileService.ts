@@ -48,17 +48,25 @@ export interface ActivityData {
 
 // Mock data for development mode
 const mockProfile: UserProfile = {
-  id: 'mock-user-123',
-  firstName: 'أحمد',
-  lastName: 'محمد',
-  email: 'ahmed@example.com',
+  id: '1',
+  firstName: 'John',
+  lastName: 'Doe',
+  name: 'John Doe',
+  email: 'john@example.com',
   phone: '+1234567890',
-  bio: 'مطور تطبيقات محترف ومحب للتعلم',
-  location: 'الرياض، السعودية',
+  bio: 'Software developer and learner',
+  location: {
+    city: 'Ramallah',
+    country: 'Palestine'
+  },
   avatarUrl: 'https://via.placeholder.com/150',
-  language: 'ar',
-  createdAt: '2023-01-15T00:00:00Z',
-  updatedAt: '2024-01-15T00:00:00Z',
+  language: 'en',
+  totalLessons: 0,
+  totalReviews: 0,
+  averageRating: 0,
+  completedCourses: 0,
+  createdAt: '2024-01-15T00:00:00Z',
+  updatedAt: new Date().toISOString(),
 };
 
 const mockLanguages: Language[] = [
@@ -90,12 +98,12 @@ const mockNotificationSettings: NotificationSettings = {
 };
 
 const mockActivity: ActivityData = {
-  totalLessons: 45,
-  totalReviews: 12,
-  averageRating: 4.8,
-  joinDate: '2023-01-15',
-  lastActive: '2024-01-15',
-  completedCourses: 8,
+  totalLessons: 0,
+  totalReviews: 0,
+  averageRating: 0,
+  joinDate: '2024-01-15',
+  lastActive: new Date().toISOString().split('T')[0],
+  completedCourses: 0,
 };
 
 export const profileService = {

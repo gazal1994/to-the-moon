@@ -106,6 +106,21 @@ const TeacherCard: React.FC<TeacherCardProps> = ({
             )}
           </View>
 
+          {/* Role Badge */}
+          {teacher.role && (
+            <View style={[
+              styles.roleBadge,
+              { backgroundColor: teacher.role === 'TEACHER' ? '#e8f4f8' : '#fff4e6' }
+            ]}>
+              <Text style={[
+                styles.roleText,
+                { color: teacher.role === 'TEACHER' ? '#0a66c2' : '#f59e0b' }
+              ]}>
+                {teacher.role === 'TEACHER' ? '👨‍🏫 Teacher' : '👨‍🎓 Student'}
+              </Text>
+            </View>
+          )}
+
           <Text style={styles.experience}>
             {teacher.experience} years experience
           </Text>

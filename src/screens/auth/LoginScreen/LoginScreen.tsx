@@ -29,18 +29,29 @@ const LoginScreen: React.FC<ScreenProps> = ({ navigation }) => {
 
   const onSubmit = async (data: LoginRequest) => {
     try {
+      console.log('🔐 Login attempt:', { email: data.email });
       const result = await dispatch(loginUser(data)).unwrap();
+      console.log('✅ Login successful:', result);
       if (result) {
         navigation.navigate('Main');
       }
     } catch (error: any) {
-      Alert.alert(t('common.error'), error || t('auth.invalidCredentials'));
+      console.error('❌ Login error:', error);
+      Alert.alert(
+        t('common.error'), 
+        error || t('auth.invalidCredentials'),
+        [{ text: 'OK' }]
+      );
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView 
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.header}>
           <LanguageSelector style={styles.languageSelector} />
           <Text style={styles.title}>{t('auth.welcomeBack')}</Text>
@@ -57,8 +68,8 @@ const LoginScreen: React.FC<ScreenProps> = ({ navigation }) => {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                label={t('common.email')}
-                placeholder={t('common.email')}
+                label="Email"
+                placeholder="Email"
                 leftIcon="mail-outline"
                 value={value}
                 onChangeText={onChange}
@@ -83,8 +94,8 @@ const LoginScreen: React.FC<ScreenProps> = ({ navigation }) => {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                label={t('common.password')}
-                placeholder={t('common.password')}
+                label="Password"
+                placeholder="Password"
                 leftIcon="lock-closed-outline"
                 value={value}
                 onChangeText={onChange}

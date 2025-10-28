@@ -1,5 +1,4 @@
 import { apiClient } from './apiClient';
-import { mockAuthService } from './mockAuthService';
 import {
   LoginRequest,
   RegisterRequest,
@@ -10,9 +9,18 @@ import {
   ApiResponse,
 } from '../types';
 
-// Use mock service in development
-const isDevelopment = __DEV__;
-const service = isDevelopment ? mockAuthService : {
+/**
+ * Auth Service
+ * 
+ * Backend integration is now ENABLED!
+ * - Backend API endpoint: http://10.0.2.2:3000/api (for Android emulator)
+ * - Server is running on localhost:3000
+ * - PostgreSQL database connected
+ * 
+ * Registration endpoint: POST /api/auth/register
+ * Login endpoint: POST /api/auth/login
+ */
+const service = {
   async login(credentials: LoginRequest): Promise<ApiResponse<{ user: UserWithProfile; tokens: AuthTokens }>> {
     return apiClient.post('/auth/login', credentials);
   },

@@ -6,9 +6,10 @@ import {
   Image,
   StyleSheet,
   Alert,
+  Platform,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import * as ImagePicker from 'expo-image-picker';
+import { launchImageLibrary, ImagePickerResponse, Asset } from 'react-native-image-picker';
 import { COLORS, SHADOWS, BORDER_RADIUS } from '../../constants';
 import { UserProfile } from '../../types';
 import { profileService } from '../../services';
@@ -40,26 +41,26 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
   const selectImage = async () => {
     try {
-      // Request permission
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      
-      if (permissionResult.granted === false) {
-        Alert.alert(
-          t('common.error'),
-          t('profile.permissionRequired')
-        );
+      // Launch image picker
+      const result: ImagePickerResponse = await launchImageLibrary({
+        mediaType: 'photo',
+        includeBase64: false,
+        maxHeight: 800,
+        maxWidth: 800,
+        quality: 0.8,
+        selectionLimit: 1,
+      });
+
+      if (result.didCancel) {
         return;
       }
 
-      // Launch image picker
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.8,
-      });
+      if (result.errorCode) {
+        Alert.alert(t('common.error'), t('profile.imageSelectionFailed'));
+        return;
+      }
 
-      if (!result.canceled && result.assets && result.assets[0]) {
+      if (result.assets && result.assets[0]) {
         uploadAvatar(result.assets[0]);
       }
     } catch (error) {
@@ -68,15 +69,15 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     }
   };
 
-  const uploadAvatar = async (asset: ImagePicker.ImagePickerAsset) => {
+  const uploadAvatar = async (asset: Asset) => {
     if (!asset.uri) return;
 
     setUploadingAvatar(true);
     try {
       const formData = new FormData();
       formData.append('avatar', {
-        uri: asset.uri,
-        type: asset.mimeType || 'image/jpeg',
+        uri: Platform.OS === 'android' ? asset.uri : asset.uri.replace('file://', ''),
+        type: asset.type || 'image/jpeg',
         name: asset.fileName || 'avatar.jpg',
       } as any);
 
@@ -169,14 +170,16 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.white,
     borderRadius: BORDER_RADIUS.lg,
-    margin: 16,
+    marginHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 12,
     padding: 20,
     ...SHADOWS.medium,
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 20,
+    marginBottom: 4,
   },
   avatarContainer: {
     position: 'relative',
@@ -246,24 +249,31 @@ const styles = StyleSheet.create({
   },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: 16,
+    justifyContent: 'space-between',
+    paddingTop: 20,
+    paddingHorizontal: 8,
+    marginTop: 16,
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
+    borderTopColor: '#e4e6eb',
   },
   statItem: {
     alignItems: 'center',
+    flex: 1,
+    paddingVertical: 4,
   },
   statValue: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: '700',
-    color: COLORS.linkedinBlue,
-    marginBottom: 2,
+    color: '#0a66c2',
+    marginBottom: 4,
+    letterSpacing: 0.5,
   },
   statLabel: {
-    fontSize: 12,
-    color: COLORS.textSecondary,
+    fontSize: 11,
+    color: '#65676b',
     textAlign: 'center',
+    fontWeight: '500',
+    lineHeight: 14,
   },
 });
 

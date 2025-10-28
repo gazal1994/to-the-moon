@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { 
   searchTeachers, 
   setSearchQuery, 
@@ -25,11 +26,13 @@ import {
 import { RootState, AppDispatch } from '../../../store';
 import TeacherCard from '../../../components/TeacherCard';
 import { SearchFilters, UserWithProfile, Teacher } from '../../../types';
+import { teacherService } from '../../../services';
 import { styles } from './SearchScreen.styles';
 
 const SearchScreen: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
+  const navigation = useNavigation();
   
   const {
     teachers,
@@ -50,6 +53,13 @@ const SearchScreen: React.FC = () => {
   const [selectedPriceRange, setSelectedPriceRange] = useState<{ min: number; max: number } | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [selectedSubject, setSelectedSubject] = useState<string>('');
+  const [teachersData, setTeachersData] = useState<Teacher[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMoreData, setHasMoreData] = useState(true);
+  const [availableSubjects, setAvailableSubjects] = useState<string[]>([]);
+  const [availableLocations, setAvailableLocations] = useState<{ cities: string[]; countries: string[] }>({ cities: [], countries: [] });
 
   // LinkedIn-style color palette for teacher cards
   const linkedinColors = [
@@ -66,294 +76,124 @@ const SearchScreen: React.FC = () => {
     return linkedinColors[index % linkedinColors.length];
   };
 
-  // Mock data for development
-  const mockTeachers: UserWithProfile[] = [
-    {
-      id: '1',
-      email: 'ahmad@example.com',
-      firstName: 'Ahmad',
-      lastName: 'Ali',
-      isVerified: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      profile: {
-        id: '1',
-        userId: '1',
-        bio: 'Experienced Arabic teacher with 10 years of experience',
-        subjects: ['Arabic', 'Islamic Studies'],
-        languages: ['Arabic', 'English'],
-        teachingLevel: 'Advanced',
-        city: 'Riyadh',
-        country: 'Saudi Arabia',
-        hourlyRate: 25,
-        isVolunteer: false,
-        rating: 4.8,
-        totalStudents: 120,
-        profileImage: null,
-        learningModes: ['online', 'in-person'],
-        availability: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+  // Load teachers data from API
+  const loadTeachers = async (isRefresh: boolean = false) => {
+    try {
+      if (isRefresh) {
+        setRefreshing(true);
+        setPage(1);
+      } else {
+        setLoading(true);
       }
-    },
-    {
-      id: '2',
-      email: 'fatima@example.com',
-      firstName: 'Fatima',
-      lastName: 'Hassan',
-      isVerified: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      profile: {
-        id: '2',
-        userId: '2',
-        bio: 'Native Arabic speaker specializing in Quranic studies',
-        subjects: ['Quran', 'Arabic', 'Tajweed'],
-        languages: ['Arabic', 'English', 'French'],
-        teachingLevel: 'Expert',
-        city: 'Cairo',
-        country: 'Egypt',
-        hourlyRate: 0,
-        isVolunteer: true,
-        rating: 5.0,
-        totalStudents: 85,
-        profileImage: null,
-        learningModes: ['online'],
-        availability: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-    },
-    {
-      id: '3',
-      email: 'omar@example.com',
-      firstName: 'Omar',
-      lastName: 'Ibrahim',
-      isVerified: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      profile: {
-        id: '3',
-        userId: '3',
-        bio: 'Young and energetic teacher focusing on modern Arabic',
-        subjects: ['Modern Arabic', 'Conversation'],
-        languages: ['Arabic', 'English'],
-        teachingLevel: 'Intermediate',
-        city: 'Dubai',
-        country: 'UAE',
-        hourlyRate: 30,
-        isVolunteer: false,
-        rating: 4.5,
-        totalStudents: 65,
-        profileImage: null,
-        learningModes: ['online', 'in-person'],
-        availability: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-    },
-    {
-      id: '4',
-      email: 'mohammed@example.com',
-      firstName: 'Mohammed',
-      lastName: 'Al-Rashid',
-      isVerified: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      profile: {
-        id: '4',
-        userId: '4',
-        bio: 'Mathematics and Science teacher with engineering background',
-        subjects: ['Mathematics', 'Science', 'Physics'],
-        languages: ['English', 'Arabic'],
-        teachingLevel: 'Advanced',
-        city: 'Jeddah',
-        country: 'Saudi Arabia',
-        hourlyRate: 40,
-        isVolunteer: false,
-        rating: 4.9,
-        totalStudents: 95,
-        profileImage: null,
-        learningModes: ['online', 'in-person'],
-        availability: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-    },
-    {
-      id: '5',
-      email: 'sara@example.com',
-      firstName: 'Sara',
-      lastName: 'Ahmed',
-      isVerified: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      profile: {
-        id: '5',
-        userId: '5',
-        bio: 'English language specialist and literature enthusiast',
-        subjects: ['English', 'Literature', 'Writing'],
-        languages: ['English', 'Arabic'],
-        teachingLevel: 'Advanced',
-        city: 'Dammam',
-        country: 'Saudi Arabia',
-        hourlyRate: 30,
-        isVolunteer: false,
-        rating: 4.7,
-        totalStudents: 110,
-        profileImage: null,
-        learningModes: ['online'],
-        availability: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-    },
-    {
-      id: '6',
-      email: 'layla@example.com',
-      firstName: 'Layla',
-      lastName: 'Mansour',
-      isVerified: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      profile: {
-        id: '6',
-        userId: '6',
-        bio: 'Volunteer Islamic Studies teacher with deep knowledge of Fiqh',
-        subjects: ['Islamic Studies', 'Fiqh', 'Arabic'],
-        languages: ['Arabic', 'English'],
-        teachingLevel: 'Intermediate',
-        city: 'Mecca',
-        country: 'Saudi Arabia',
-        hourlyRate: 0,
-        isVolunteer: true,
-        rating: 4.8,
-        totalStudents: 60,
-        profileImage: null,
-        learningModes: ['online', 'in-person'],
-        availability: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-    }
-  ];
 
-  useEffect(() => {
-    // Load initial data with mock fallback
-    handleSearch(true);
-  }, []);
+      console.log('🔍 Loading teachers with filters:', {
+        query: localSearchQuery,
+        page: isRefresh ? 1 : page,
+        subject: selectedSubject,
+        city: selectedLocation,
+        minPrice: selectedPriceRange?.min,
+        maxPrice: selectedPriceRange?.max,
+      });
+
+      const response = await teacherService.searchTeachers({
+        query: localSearchQuery || undefined,
+        page: isRefresh ? 1 : page,
+        limit: 20,
+        subjects: selectedSubject ? [selectedSubject] : undefined,
+        city: selectedLocation || undefined,
+        minPrice: selectedPriceRange?.min,
+        maxPrice: selectedPriceRange?.max,
+        isVolunteer: filters.isVolunteer,
+        rating: filters.rating,
+      });
+
+      if (response.success && response.data) {
+        const newTeachers = response.data.teachers || [];
+        
+        if (isRefresh) {
+          setTeachersData(newTeachers);
+          setPage(2);
+        } else {
+          setTeachersData(prevData => [...prevData, ...newTeachers]);
+          setPage(prevPage => prevPage + 1);
+        }
+
+        setHasMoreData(response.data.hasMore || false);
+        console.log(`✅ Loaded ${newTeachers.length} teachers`);
+      } else {
+        console.log('⚠️ No teachers data received');
+        if (isRefresh) {
+          setTeachersData([]);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Failed to load teachers:', error);
+      Alert.alert(t('common.error'), 'Failed to load teachers');
+      // Set empty array on error to prevent undefined issues
+      if (isRefresh) {
+        setTeachersData([]);
+      }
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  // Load available subjects and locations
+  const loadFilterOptions = async () => {
+    try {
+      const [subjectsResponse, locationsResponse] = await Promise.all([
+        teacherService.getAvailableSubjects(),
+        teacherService.getAvailableLocations(),
+      ]);
+
+      if (subjectsResponse.success && subjectsResponse.data) {
+        setAvailableSubjects(subjectsResponse.data);
+      } else {
+        // Set default subjects if API fails
+        setAvailableSubjects([]);
+      }
+
+      if (locationsResponse.success && locationsResponse.data) {
+        setAvailableLocations(locationsResponse.data);
+      } else {
+        // Set default locations if API fails
+        setAvailableLocations({ cities: [], countries: [] });
+      }
+    } catch (error) {
+      console.error('❌ Failed to load filter options:', error);
+      // Set defaults on error
+      setAvailableSubjects([]);
+      setAvailableLocations({ cities: [], countries: [] });
+    }
+  };
+
+  // Load data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      console.log('🔄 SearchScreen loading teachers...');
+      loadTeachers(true);
+      loadFilterOptions();
+    }, [])
+  );
 
   useEffect(() => {
     // Trigger search when filters change
-    if (Object.keys(filters).length > 0 || selectedPriceRange || selectedLocation || selectedSubject) {
-      handleSearch(true);
+    if (selectedPriceRange || selectedLocation || selectedSubject) {
+      loadTeachers(true);
     }
-  }, [filters, selectedPriceRange, selectedLocation, selectedSubject]);
+  }, [selectedPriceRange, selectedLocation, selectedSubject]);
 
-  const handleSearch = useCallback(async (refresh = false) => {
-    try {
-      // In development, use mock data directly
-      if (__DEV__) {
-        console.log('🔧 Using mock teachers data in development mode');
-        console.log('🔍 Search query:', localSearchQuery);
-        console.log('🎯 Active filters:', filters);
-        
-        // Filter mock data based on search query and filters
-        let filteredTeachers = [...mockTeachers];
-        
-        // Apply search query filter
-        if (localSearchQuery && localSearchQuery.trim() !== '') {
-          const searchTerm = localSearchQuery.toLowerCase().trim();
-          filteredTeachers = filteredTeachers.filter(teacher => 
-            teacher.firstName.toLowerCase().includes(searchTerm) ||
-            teacher.lastName.toLowerCase().includes(searchTerm) ||
-            teacher.profile?.subjects?.some(subject => 
-              subject.toLowerCase().includes(searchTerm)
-            ) ||
-            teacher.profile?.bio?.toLowerCase().includes(searchTerm) ||
-            teacher.profile?.city?.toLowerCase().includes(searchTerm) ||
-            teacher.profile?.country?.toLowerCase().includes(searchTerm)
-          );
-        }
-
-        // Apply subject filter
-        if (filters.subject) {
-          filteredTeachers = filteredTeachers.filter(teacher =>
-            teacher.profile?.subjects?.some(subject => 
-              subject.toLowerCase().includes(filters.subject!.toLowerCase())
-            )
-          );
-        }
-
-        // Apply location filter
-        if (filters.city) {
-          filteredTeachers = filteredTeachers.filter(teacher =>
-            teacher.profile?.city?.toLowerCase().includes(filters.city!.toLowerCase())
-          );
-        }
-
-        // Apply volunteer/paid filter
-        if (filters.isVolunteer !== undefined) {
-          filteredTeachers = filteredTeachers.filter(teacher =>
-            teacher.profile?.isVolunteer === filters.isVolunteer
-          );
-        }
-
-        // Apply price range filter
-        if (filters.priceMin !== undefined) {
-          filteredTeachers = filteredTeachers.filter(teacher =>
-            teacher.profile?.hourlyRate! >= filters.priceMin!
-          );
-        }
-        
-        if (filters.priceMax !== undefined) {
-          filteredTeachers = filteredTeachers.filter(teacher =>
-            teacher.profile?.hourlyRate! <= filters.priceMax!
-          );
-        }
-
-        // Apply rating filter
-        if (filters.rating) {
-          filteredTeachers = filteredTeachers.filter(teacher =>
-            teacher.profile?.rating! >= filters.rating!
-          );
-        }
-
-        console.log(`📚 Found ${filteredTeachers.length} teachers matching criteria`);
-        
-        // Dispatch to Redux to update the state
-        dispatch(searchTeachers({ 
-          filters: { ...filters, subject: localSearchQuery }, 
-          page: 1,
-          refresh: true,
-          mockResults: filteredTeachers // Pass filtered results
-        }));
-        
-        return;
-      }
-
-      // Real API call
-      await dispatch(searchTeachers({ 
-        filters: { ...filters, subject: localSearchQuery }, 
-        page: refresh ? 1 : currentPage,
-        refresh 
-      })).unwrap();
-    } catch (err) {
-      console.error('❌ Search failed:', err);
-      Alert.alert(t('common.error'), t('search.errorMessage'));
-    }
-  }, [dispatch, filters, localSearchQuery, currentPage, mockTeachers]);
+  const handleSearch = async () => {
+    await loadTeachers(true);
+  };
 
   const handleSearchInput = (text: string) => {
     setLocalSearchQuery(text);
-    dispatch(setSearchQuery(text));
-    
-    // Trigger search automatically after typing (with a small delay)
-    setTimeout(() => {
-      if (text === localSearchQuery) { // Only search if text hasn't changed
-        handleSearch(true);
-      }
-    }, 300);
+  };
+
+  const handleSearchSubmit = () => {
+    handleSearch();
   };
 
   const handleFilterChange = (key: keyof SearchFilters, value: any) => {
@@ -366,82 +206,68 @@ const SearchScreen: React.FC = () => {
     setSelectedPriceRange(null);
     setSelectedLocation('');
     setSelectedSubject('');
+    loadTeachers(true);
   };
 
   const handlePriceRangeSelect = (range: { min: number; max: number }) => {
     setSelectedPriceRange(range);
-    handleFilterChange('priceMin', range.min);
-    handleFilterChange('priceMax', range.max);
     setShowPriceModal(false);
   };
 
   const handleLocationSelect = (location: string) => {
     setSelectedLocation(location);
-    handleFilterChange('city', location);
     setShowLocationModal(false);
   };
 
   const handleSubjectSelect = (subject: string) => {
     setSelectedSubject(subject);
-    handleFilterChange('subject', subject);
     setShowSubjectModal(false);
   };
 
   const handleRefresh = () => {
-    dispatch(resetSearch());
-    handleSearch(true);
+    loadTeachers(true);
   };
 
   const handleLoadMore = () => {
-    if (!isLoading && hasMore) {
-      handleSearch();
+    if (!loading && hasMoreData) {
+      loadTeachers(false);
     }
   };
 
-  const handleTeacherPress = (teacher: UserWithProfile) => {
-    Alert.alert(
-      t('search.teacherProfile'),
-      `${teacher.firstName} ${teacher.lastName}\n${teacher.profile?.bio}\n\n${t('search.subjects')}: ${teacher.profile?.subjects?.join(', ')}\n${t('search.rating')}: ${teacher.profile?.rating || 'N/A'}`
-    );
+  const handleToggleFavorite = async (teacherId: string) => {
+    try {
+      const response = await teacherService.toggleFavorite(teacherId);
+      
+      if (response.success) {
+        dispatch(toggleFavorite(teacherId));
+        Alert.alert(
+          t('common.success'),
+          response.data?.isFavorite ? 'Added to favorites' : 'Removed from favorites'
+        );
+      }
+    } catch (error) {
+      console.error('❌ Failed to toggle favorite:', error);
+      Alert.alert(t('common.error'), 'Failed to update favorite status');
+    }
   };
 
-  const handleFavoritePress = (teacherId: string) => {
-    dispatch(toggleFavorite(teacherId));
+  const handleTeacherPress = (teacher: Teacher) => {
+    navigation.navigate('TeacherProfile' as never, { teacherId: teacher.id } as never);
   };
 
-  const renderTeacherItem = ({ item, index }: { item: UserWithProfile; index: number }) => {
-    // Convert UserWithProfile to Teacher format for TeacherCard
-    const teacher: Teacher = {
-      id: item.id,
-      name: `${item.firstName} ${item.lastName}`,
-      avatar: item.profile?.profileImage || undefined,
-      rating: item.profile?.rating || 0,
-      reviewCount: item.profile?.totalStudents || 0,
-      experience: 5, // Mock experience years
-      location: `${item.profile?.city || 'Unknown'}, ${item.profile?.country || 'Unknown'}`,
-      subjects: item.profile?.subjects || ['Arabic'],
-      availableModes: item.profile?.learningModes || ['online'],
-      pricePerHour: item.profile?.hourlyRate || 0,
-      bio: item.profile?.bio || '',
-      isVerified: item.isVerified,
-      languages: item.profile?.languages || ['Arabic']
-    };
-
+  const renderTeacherItem = ({ item, index }: { item: Teacher; index: number }) => {
     const cardColor = getTeacherColor(index);
 
     return (
       <TeacherCard
-        teacher={teacher}
+        teacher={item}
         isFavorite={favorites.includes(item.id)}
         onPress={() => handleTeacherPress(item)}
-        onFavoritePress={() => handleFavoritePress(item.id)}
-        accentColor={cardColor} // Pass dynamic color
+        onFavoritePress={() => handleToggleFavorite(item.id)}
+        accentColor={cardColor}
       />
     );
   };
-
-  // Use Redux state teachers (which includes filtered results in dev mode)
-  const displayTeachers = teachers;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -458,12 +284,12 @@ const SearchScreen: React.FC = () => {
           placeholder={t('search.searchPlaceholder')}
           value={localSearchQuery}
           onChangeText={handleSearchInput}
-          onSubmitEditing={() => handleSearch(true)}
+          onSubmitEditing={handleSearchSubmit}
           returnKeyType="search"
         />
         <TouchableOpacity 
           style={styles.searchButton}
-          onPress={() => handleSearch(true)}
+          onPress={handleSearchSubmit}
           activeOpacity={0.8} // Smooth button feedback
         >
           <Text style={styles.searchButtonText}>{t('search.search')}</Text>
@@ -564,51 +390,59 @@ const SearchScreen: React.FC = () => {
       {/* Results Count */}
       <View style={styles.resultsHeader}>
         <Text style={styles.resultsCount}>
-          {t('search.foundTeachers', { count: displayTeachers.length })}
+          {t('search.foundTeachers', { count: teachersData.length })}
         </Text>
       </View>
 
       {/* Teachers List */}
-      <FlatList
-        data={displayTeachers}
-        renderItem={renderTeacherItem}
-        keyExtractor={(item) => item.id}
-        style={styles.teachersList}
-        contentContainerStyle={styles.teachersListContent}
-        refreshControl={
-          <RefreshControl
-            refreshing={isLoading}
-            onRefresh={handleRefresh}
-            tintColor="#0a66c2" // LinkedIn professional blue
-            colors={['#0a66c2']} // Android
-          />
-        }
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.3}
-        removeClippedSubviews={true} // Performance optimization
-        maxToRenderPerBatch={5} // Render fewer items per batch for smoothness
-        updateCellsBatchingPeriod={100} // Batch updates for smoother scrolling
-        windowSize={10} // Optimize memory usage
-        showsVerticalScrollIndicator={false} // Cleaner look
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>
-              {isLoading ? t('search.searching') : t('search.noTeachers')}
-            </Text>
-            {isLoading && <ActivityIndicator size="large" style={styles.loader} />}
-          </View>
-        }
-        ListFooterComponent={
-          isLoading && displayTeachers.length > 0 ? (
-            <ActivityIndicator size="small" style={styles.footerLoader} />
-          ) : null
-        }
-      />
+      {loading && teachersData.length === 0 ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0a66c2" />
+          <Text style={styles.loadingText}>Loading teachers...</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={teachersData}
+          renderItem={renderTeacherItem}
+          keyExtractor={(item) => item.id}
+          style={styles.teachersList}
+          contentContainerStyle={styles.teachersListContent}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor="#0a66c2"
+              colors={['#0a66c2']}
+            />
+          }
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.3}
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={5}
+          updateCellsBatchingPeriod={100}
+          windowSize={10}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyEmoji}>🔍</Text>
+              <Text style={styles.emptyTitle}>No teachers found</Text>
+              <Text style={styles.emptyText}>
+                Try adjusting your search criteria or filters
+              </Text>
+            </View>
+          }
+          ListFooterComponent={
+            loading && teachersData.length > 0 ? (
+              <ActivityIndicator size="small" style={styles.footerLoader} color="#0a66c2" />
+            ) : null
+          }
+        />
+      )}
 
       {error && (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{error}</Text>
-          <TouchableOpacity style={styles.retryButton} onPress={() => handleSearch(true)}>
+          <TouchableOpacity style={styles.retryButton} onPress={handleSearch}>
             <Text style={styles.retryButtonText}>{t('common.retry')}</Text>
           </TouchableOpacity>
         </View>
@@ -679,16 +513,18 @@ const SearchScreen: React.FC = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>{t('search.selectLocation')}</Text>
             
-            {['📍 Riyadh', '🏙️ Jeddah', '🌊 Dammam', '🕌 Mecca', '🌟 Medina', '🏔️ Taif', '💻 Online'].map((location) => (
-              <TouchableOpacity 
-                key={location}
-                style={styles.modalOption}
-                onPress={() => handleLocationSelect(location.split(' ')[1])} // Remove emoji for filter
-                activeOpacity={0.8}
-              >
-                <Text style={styles.modalOptionText}>{location}</Text>
-              </TouchableOpacity>
-            ))}
+            <ScrollView style={styles.modalScroll}>
+              {(availableLocations?.cities || []).map((city) => (
+                <TouchableOpacity 
+                  key={city}
+                  style={styles.modalOption}
+                  onPress={() => handleLocationSelect(city)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.modalOptionText}>📍 {city}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
             
             <TouchableOpacity 
               style={styles.modalCloseButton}
@@ -712,16 +548,18 @@ const SearchScreen: React.FC = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>{t('search.selectSubject')}</Text>
             
-            {['📚 Arabic', '🇺🇸 English', '🔢 Mathematics', '🔬 Science', '☪️ Islamic Studies', '📜 History', '🌍 Geography', '💻 Computer Science'].map((subject) => (
-              <TouchableOpacity 
-                key={subject}
-                style={styles.modalOption}
-                onPress={() => handleSubjectSelect(subject.split(' ')[1])} // Remove emoji for filter
-                activeOpacity={0.8}
-              >
-                <Text style={styles.modalOptionText}>{subject}</Text>
-              </TouchableOpacity>
-            ))}
+            <ScrollView style={styles.modalScroll}>
+              {(availableSubjects || []).map((subject) => (
+                <TouchableOpacity 
+                  key={subject}
+                  style={styles.modalOption}
+                  onPress={() => handleSubjectSelect(subject)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.modalOptionText}>📚 {subject}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
             
             <TouchableOpacity 
               style={styles.modalCloseButton}
@@ -736,5 +574,7 @@ const SearchScreen: React.FC = () => {
     </SafeAreaView>
   );
 };
+
+export default SearchScreen;
 
 export default SearchScreen;

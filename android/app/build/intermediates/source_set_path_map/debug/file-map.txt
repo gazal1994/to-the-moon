@@ -1,0 +1,46 @@
+com.aqra.app-cardview-1.0.0-0 C:\Users\windows11\.gradle\caches\transforms-3\015559531d64c54b195c14dcf39ae94e\transformed\cardview-1.0.0\res
+com.aqra.app-jetified-core-ktx-1.8.0-1 C:\Users\windows11\.gradle\caches\transforms-3\03159bc420c775b3b29bf0d46306ea87\transformed\jetified-core-ktx-1.8.0\res
+com.aqra.app-drawerlayout-1.1.1-2 C:\Users\windows11\.gradle\caches\transforms-3\072cc6c542b6b74abae378580821a737\transformed\drawerlayout-1.1.1\res
+com.aqra.app-jetified-drawee-2.6.0-3 C:\Users\windows11\.gradle\caches\transforms-3\0833ba2145a6f9bf12e752e95cb08895\transformed\jetified-drawee-2.6.0\res
+com.aqra.app-lifecycle-viewmodel-2.5.0-4 C:\Users\windows11\.gradle\caches\transforms-3\0a814721028161daf05592b2b69144ec\transformed\lifecycle-viewmodel-2.5.0\res
+com.aqra.app-jetified-react-android-0.72.6-debug-5 C:\Users\windows11\.gradle\caches\transforms-3\1d10fde134c6c1e96185f78cec51553d\transformed\jetified-react-android-0.72.6-debug\res
+com.aqra.app-constraintlayout-2.0.1-6 C:\Users\windows11\.gradle\caches\transforms-3\3a127324064ed994f2b6e198f4126b89\transformed\constraintlayout-2.0.1\res
+com.aqra.app-jetified-appcompat-resources-1.5.0-7 C:\Users\windows11\.gradle\caches\transforms-3\3a72f23efbc661c002e77d83d34295ac\transformed\jetified-appcompat-resources-1.5.0\res
+com.aqra.app-transition-1.2.0-8 C:\Users\windows11\.gradle\caches\transforms-3\3af85eb1ddf23723af8960facf3d78c9\transformed\transition-1.2.0\res
+com.aqra.app-jetified-tracing-1.1.0-9 C:\Users\windows11\.gradle\caches\transforms-3\3f05a92c10a0b1461a5fcdf403cdfa4a\transformed\jetified-tracing-1.1.0\res
+com.aqra.app-jetified-startup-runtime-1.1.1-10 C:\Users\windows11\.gradle\caches\transforms-3\416b34deeb366f34e33c33ae34797bae\transformed\jetified-startup-runtime-1.1.1\res
+com.aqra.app-jetified-lifecycle-process-2.4.1-11 C:\Users\windows11\.gradle\caches\transforms-3\4926537a6de6543aa91c05b4f6d73904\transformed\jetified-lifecycle-process-2.4.1\res
+com.aqra.app-lifecycle-livedata-core-2.5.0-12 C:\Users\windows11\.gradle\caches\transforms-3\5f5cbecd34991ba36045d2b7e3213f09\transformed\lifecycle-livedata-core-2.5.0\res
+com.aqra.app-jetified-emoji2-views-helper-1.2.0-13 C:\Users\windows11\.gradle\caches\transforms-3\64d23b822f59565481e6fa93ad862c22\transformed\jetified-emoji2-views-helper-1.2.0\res
+com.aqra.app-jetified-annotation-experimental-1.4.0-14 C:\Users\windows11\.gradle\caches\transforms-3\68baff2406f0c872becafc12265a4d4f\transformed\jetified-annotation-experimental-1.4.0\res
+com.aqra.app-jetified-activity-1.5.0-15 C:\Users\windows11\.gradle\caches\transforms-3\6b098b1dd9927316826ab2b59db84f5c\transformed\jetified-activity-1.5.0\res
+com.aqra.app-material-1.9.0-16 C:\Users\windows11\.gradle\caches\transforms-3\77db712e3f095e50c649e9e0152f9434\transformed\material-1.9.0\res
+com.aqra.app-jetified-flipper-0.182.0-17 C:\Users\windows11\.gradle\caches\transforms-3\7c995fbf50e20bb02a18ce2aad652174\transformed\jetified-flipper-0.182.0\res
+com.aqra.app-jetified-emoji2-1.2.0-18 C:\Users\windows11\.gradle\caches\transforms-3\7dbbfbcb2130a792429ad5ff991adbe1\transformed\jetified-emoji2-1.2.0\res
+com.aqra.app-sqlite-2.2.0-19 C:\Users\windows11\.gradle\caches\transforms-3\9a2bb39e553e5057692dca841b822bbf\transformed\sqlite-2.2.0\res
+com.aqra.app-swiperefreshlayout-1.1.0-20 C:\Users\windows11\.gradle\caches\transforms-3\9a89e2c8157d26bd49d5535dfd71632c\transformed\swiperefreshlayout-1.1.0\res
+com.aqra.app-lifecycle-runtime-2.5.0-21 C:\Users\windows11\.gradle\caches\transforms-3\a56f6fc08199fe62bdda61bf2f04501c\transformed\lifecycle-runtime-2.5.0\res
+com.aqra.app-fragment-1.3.6-22 C:\Users\windows11\.gradle\caches\transforms-3\aaa3ae663c5a6bd23e706c9c104490ce\transformed\fragment-1.3.6\res
+com.aqra.app-jetified-autofill-1.1.0-23 C:\Users\windows11\.gradle\caches\transforms-3\b04492f6870fc87101ce9474dfdf5bed\transformed\jetified-autofill-1.1.0\res
+com.aqra.app-recyclerview-1.3.1-24 C:\Users\windows11\.gradle\caches\transforms-3\bffd8dd35187c8a369e5b84e1059eef6\transformed\recyclerview-1.3.1\res
+com.aqra.app-jetified-customview-poolingcontainer-1.0.0-25 C:\Users\windows11\.gradle\caches\transforms-3\c774fcd8c465b5fd6a9a559dee31f751\transformed\jetified-customview-poolingcontainer-1.0.0\res
+com.aqra.app-jetified-savedstate-1.2.0-26 C:\Users\windows11\.gradle\caches\transforms-3\de0754b6a46ef29a1d22e710702fe27a\transformed\jetified-savedstate-1.2.0\res
+com.aqra.app-sqlite-framework-2.2.0-27 C:\Users\windows11\.gradle\caches\transforms-3\dee1bcb870c8ec088474c756f9d15bc0\transformed\sqlite-framework-2.2.0\res
+com.aqra.app-core-1.8.0-28 C:\Users\windows11\.gradle\caches\transforms-3\e3a61ae89fa8547dae4a79678e874a41\transformed\core-1.8.0\res
+com.aqra.app-coordinatorlayout-1.2.0-29 C:\Users\windows11\.gradle\caches\transforms-3\ec4d3d09fb8ce9acd4a585cc7bb29d25\transformed\coordinatorlayout-1.2.0\res
+com.aqra.app-appcompat-1.5.0-30 C:\Users\windows11\.gradle\caches\transforms-3\fa4c409c5ddad8cf9fa029ef0d9b3950\transformed\appcompat-1.5.0\res
+com.aqra.app-jetified-lifecycle-viewmodel-savedstate-2.5.0-31 C:\Users\windows11\.gradle\caches\transforms-3\fcf9d42f00f1671b61e834bbfd9a32f3\transformed\jetified-lifecycle-viewmodel-savedstate-2.5.0\res
+com.aqra.app-jetified-viewpager2-1.1.0-32 C:\Users\windows11\.gradle\caches\transforms-3\fda69c6dd1a7dae09a40514d43b382b3\transformed\jetified-viewpager2-1.1.0\res
+com.aqra.app-pngs-33 C:\Users\windows11\Desktop\fix the code\Aqra\android\app\build\generated\res\pngs\debug
+com.aqra.app-resValues-34 C:\Users\windows11\Desktop\fix the code\Aqra\android\app\build\generated\res\resValues\debug
+com.aqra.app-packageDebugResources-35 C:\Users\windows11\Desktop\fix the code\Aqra\android\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.aqra.app-packageDebugResources-36 C:\Users\windows11\Desktop\fix the code\Aqra\android\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.aqra.app-merged_res-37 C:\Users\windows11\Desktop\fix the code\Aqra\android\app\build\intermediates\merged_res\debug
+com.aqra.app-debug-38 C:\Users\windows11\Desktop\fix the code\Aqra\android\app\src\debug\res
+com.aqra.app-main-39 C:\Users\windows11\Desktop\fix the code\Aqra\android\app\src\main\res
+com.aqra.app-packaged_res-40 C:\Users\windows11\Desktop\fix the code\Aqra\node_modules\@react-native-async-storage\async-storage\android\build\intermediates\packaged_res\debug
+com.aqra.app-packaged_res-41 C:\Users\windows11\Desktop\fix the code\Aqra\node_modules\react-native-gesture-handler\android\build\intermediates\packaged_res\debug
+com.aqra.app-packaged_res-42 C:\Users\windows11\Desktop\fix the code\Aqra\node_modules\react-native-pager-view\android\build\intermediates\packaged_res\debug
+com.aqra.app-packaged_res-43 C:\Users\windows11\Desktop\fix the code\Aqra\node_modules\react-native-safe-area-context\android\build\intermediates\packaged_res\debug
+com.aqra.app-packaged_res-44 C:\Users\windows11\Desktop\fix the code\Aqra\node_modules\react-native-screens\android\build\intermediates\packaged_res\debug
+com.aqra.app-packaged_res-45 C:\Users\windows11\Desktop\fix the code\Aqra\node_modules\react-native-vector-icons\android\build\intermediates\packaged_res\debug

@@ -105,4 +105,5 @@ export interface Teacher {
   bio?: string;
   isVerified?: boolean;
   languages?: string[];
+  role?: 'TEACHER' | 'STUDENT';
 }

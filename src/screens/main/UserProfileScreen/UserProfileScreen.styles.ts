@@ -6,6 +6,9 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  safeArea: {
+    backgroundColor: COLORS.white,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -38,10 +41,6 @@ export const styles = StyleSheet.create({
   },
   headerSpacer: {
     width: 44,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: SIZES.md,
   },
   profileHeader: {
     backgroundColor: COLORS.white,
@@ -237,5 +236,182 @@ export const styles = StyleSheet.create({
     fontSize: FONT_SIZES.md,
     fontWeight: 'bold',
     color: COLORS.primary,
+  },
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContainer: {
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingBottom: SIZES.xl,
+    maxHeight: '80%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: SIZES.lg,
+    paddingVertical: SIZES.md,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  modalTitle: {
+    fontSize: FONT_SIZES.xl,
+    fontWeight: '700',
+    color: COLORS.text,
+  },
+  modalCloseButton: {
+    fontSize: 28,
+    color: COLORS.gray,
+    fontWeight: '300',
+  },
+  timeSlotsList: {
+    paddingHorizontal: SIZES.lg,
+    paddingTop: SIZES.md,
+  },
+  timeSlotItem: {
+    backgroundColor: COLORS.background,
+    borderRadius: 12,
+    padding: SIZES.md,
+    marginBottom: SIZES.sm,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  timeSlotDisabled: {
+    backgroundColor: COLORS.lightGray + '30',
+    opacity: 0.6,
+  },
+  timeSlotSelected: {
+    backgroundColor: COLORS.primary + '10',
+    borderColor: COLORS.primary,
+  },
+  timeSlotContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  timeSlotDay: {
+    fontSize: FONT_SIZES.md,
+    fontWeight: '600',
+    color: COLORS.text,
+  },
+  timeSlotTime: {
+    fontSize: FONT_SIZES.md,
+    color: COLORS.gray,
+  },
+  timeSlotTextDisabled: {
+    color: COLORS.gray + '80',
+  },
+  timeSlotTextSelected: {
+    color: COLORS.primary,
+    fontWeight: '700',
+  },
+  timeSlotUnavailable: {
+    fontSize: FONT_SIZES.sm,
+    color: COLORS.error,
+    marginTop: SIZES.xs,
+  },
+  modalBookButton: {
+    backgroundColor: COLORS.primary,
+    marginHorizontal: SIZES.lg,
+    marginTop: SIZES.md,
+    paddingVertical: SIZES.md,
+    borderRadius: 12,
+    alignItems: 'center',
+    ...SHADOWS.medium,
+  },
+  modalBookButtonDisabled: {
+    backgroundColor: COLORS.gray,
+    opacity: 0.5,
+  },
+  modalBookButtonText: {
+    fontSize: FONT_SIZES.md,
+    fontWeight: '600',
+    color: COLORS.white,
+  },
+  // Manage Appointments Styles
+  addAppointmentForm: {
+    padding: SIZES.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  addAppointmentTitle: {
+    fontSize: FONT_SIZES.md,
+    fontWeight: '600',
+    color: COLORS.text,
+    marginBottom: SIZES.sm,
+  },
+  appointmentInput: {
+    backgroundColor: COLORS.background,
+    borderRadius: 8,
+    padding: SIZES.md,
+    marginBottom: SIZES.sm,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    fontSize: FONT_SIZES.md,
+  },
+  addAppointmentButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 8,
+    padding: SIZES.md,
+    alignItems: 'center',
+  },
+  addAppointmentButtonText: {
+    fontSize: FONT_SIZES.md,
+    fontWeight: '600',
+    color: COLORS.white,
+  },
+  manageSlotItem: {
+    backgroundColor: COLORS.background,
+    borderRadius: 12,
+    padding: SIZES.md,
+    marginBottom: SIZES.sm,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  manageSlotContent: {
+    flex: 1,
+  },
+  manageSlotDay: {
+    fontSize: FONT_SIZES.md,
+    fontWeight: '600',
+    color: COLORS.text,
+  },
+  manageSlotTime: {
+    fontSize: FONT_SIZES.sm,
+    color: COLORS.gray,
+    marginTop: 2,
+  },
+  manageSlotActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SIZES.xs,
+  },
+  toggleButton: {
+    paddingHorizontal: SIZES.sm,
+    paddingVertical: SIZES.xs,
+    borderRadius: 6,
+  },
+  toggleButtonAvailable: {
+    backgroundColor: COLORS.success + '20',
+  },
+  toggleButtonUnavailable: {
+    backgroundColor: COLORS.error + '20',
+  },
+  toggleButtonText: {
+    fontSize: FONT_SIZES.xs,
+    fontWeight: '600',
+    color: COLORS.text,
+  },
+  deleteButton: {
+    padding: SIZES.xs,
+  },
+  deleteButtonText: {
+    fontSize: 20,
   },
 });

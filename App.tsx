@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
 import { I18nextProvider } from 'react-i18next';
 
-import { store, persistor } from './src/store';
+import { store } from './src/store';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { LanguageProvider } from './src/contexts';
 import { UserProvider } from './src/contexts/UserContext';
@@ -28,17 +27,15 @@ if (__DEV__) {
 export default function App() {
   return (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <I18nextProvider i18n={i18n}>
-          <LanguageProvider>
-            <UserProvider>
-              <SafeAreaProvider>
-                <RootNavigator />
-              </SafeAreaProvider>
-            </UserProvider>
-          </LanguageProvider>
-        </I18nextProvider>
-      </PersistGate>
+      <I18nextProvider i18n={i18n}>
+        <LanguageProvider>
+          <UserProvider>
+            <SafeAreaProvider>
+              <RootNavigator />
+            </SafeAreaProvider>
+          </UserProvider>
+        </LanguageProvider>
+      </I18nextProvider>
     </Provider>
   );
 }

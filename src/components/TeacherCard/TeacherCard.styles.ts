@@ -108,6 +108,17 @@ export const styles = StyleSheet.create({
     color: '#e63946',
     fontWeight: '500',
   },
+  roleBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    alignSelf: 'flex-start',
+    marginBottom: 6,
+  },
+  roleText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
   experience: {
     fontSize: 14,
     color: '#65676b',

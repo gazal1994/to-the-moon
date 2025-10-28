@@ -22,7 +22,15 @@ interface LanguageProviderProps {
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
   const { i18n } = useTranslation();
   const [currentLanguage, setCurrentLanguage] = useState(i18n.language || 'en');
-  const [availableLanguages, setAvailableLanguages] = useState<Language[]>(getAvailableLanguages());
+  
+  // Initialize with fallback languages to prevent empty array
+  const fallbackLanguages: Language[] = [
+    { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
+    { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
+  ];
+  
+  const [availableLanguages, setAvailableLanguages] = useState<Language[]>(fallbackLanguages);
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,9 +59,14 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
       }
     } catch (error) {
       console.error('Failed to load available languages:', error);
-      // Keep fallback languages from i18n - this is already handled
+      // Ensure we always have fallback languages (Arabic and English only)
+      const fallbackLanguages: Language[] = [
+        { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
+        { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
+      ];
+      setAvailableLanguages(fallbackLanguages);
       if (__DEV__) {
-        console.log('🔄 Using fallback languages for development');
+        console.log('🔄 Using fallback languages for development:', fallbackLanguages);
       }
     }
   };

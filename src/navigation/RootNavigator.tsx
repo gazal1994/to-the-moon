@@ -29,20 +29,25 @@ export const RootNavigator: React.FC = () => {
   }, [dispatch]);
 
   if (authLoading || appLoading) {
+    console.log('🔄 Loading state:', { authLoading, appLoading });
     // You can replace this with a proper loading screen
     return null;
   }
 
   const getInitialRouteName = (): keyof RootStackParamList => {
-    if (!isOnboardingCompleted) return 'Onboarding';
+    console.log('🔍 Navigation state:', { isOnboardingCompleted, isAuthenticated });
+    // Skip onboarding and go directly to Login/Auth
     if (!isAuthenticated) return 'Auth';
     return 'Main';
   };
 
+  const initialRoute = getInitialRouteName();
+  console.log('📱 Initial route:', initialRoute);
+
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={getInitialRouteName()}
+        initialRouteName={initialRoute}
         screenOptions={{
           headerShown: false,
           gestureEnabled: true,
