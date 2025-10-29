@@ -1,0 +1,32 @@
+const { getDefaultConfig } = require('expo/metro-config');
+const path = require('path');
+
+const config = getDefaultConfig(__dirname);
+
+// Add web support with proper source extensions order
+config.resolver.sourceExts = ['web.js', 'web.ts', 'web.tsx', ...config.resolver.sourceExts];
+
+// Explicitly define asset extensions - exclude audio files
+config.resolver.assetExts = [
+  'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg',
+  'ttf', 'otf', 'woff', 'woff2',
+  'db', 'json'
+];
+
+// Mock jimp packages for web
+const originalResolveRequest = config.resolver.resolveRequest;
+config.resolver.resolveRequest = (context, moduleName, platform) => {
+  const jipmPackages = ['jimp', 'jimp-compact', '@jimp/core', '@jimp/plugin-print'];
+  if (jipmPackages.includes(moduleName) && platform === 'web') {
+    return {
+      filePath: path.join(__dirname, 'jimp.web.js'),
+      type: 'sourceFile',
+    };
+  }
+  if (originalResolveRequest) {
+    return originalResolveRequest(context, moduleName, platform);
+  }
+  return context.resolveRequest(context, moduleName, platform);
+};
+
+module.exports = config;
