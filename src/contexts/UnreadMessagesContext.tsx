@@ -52,8 +52,8 @@ export const UnreadMessagesProvider: React.FC<{ children: ReactNode }> = ({ chil
     const handleSocketMessage = (messageData: any) => {
       const { event, data } = messageData;
       
-      // Handle new_message event
-      if (event === 'new_message') {
+      // Handle receive_message event (when new message arrives)
+      if (event === 'receive_message') {
         // Only increment if the message is for the current user
         if (data.receiverId === user?.id) {
           setUnreadMessagesCount(prev => prev + 1);
