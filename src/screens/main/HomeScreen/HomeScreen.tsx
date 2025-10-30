@@ -1,29 +1,72 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { useUserRole } from '../../../hooks/useUserRole';
 import { useUser } from '../../../contexts/UserContext';
+import { useNotifications } from '../../../contexts/NotificationContext';
 import { RootStackParamList } from '../../../types';
+import { apiClient } from '../../../services/apiClient';
 import { styles } from './HomeScreen.styles';
+
+interface TeacherStats {
+  activeStudents: number;
+  lessonRequests: number;
+  totalRequests: number;
+  acceptedRequests: number;
+  completedLessons: number;
+}
 
 const HomeScreen: React.FC = () => {
   const { user } = useUser();
   const { isStudent, isTeacher } = useUserRole();
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const { unreadCount } = useNotifications();
   
   // State
   const [refreshing, setRefreshing] = useState(false);
+  const [teacherStats, setTeacherStats] = useState<TeacherStats>({
+    activeStudents: 0,
+    lessonRequests: 0,
+    totalRequests: 0,
+    acceptedRequests: 0,
+    completedLessons: 0,
+  });
+  const [loading, setLoading] = useState(false);
 
-  // Refresh handler (just resets the refreshing state for now)
-  const handleRefresh = () => {
+  // Load teacher stats
+  const loadTeacherStats = async () => {
+    if (!isTeacher) return;
+    
+    try {
+      setLoading(true);
+      const response = await apiClient.get('/teachers/dashboard/stats');
+      console.log('📊 Teacher Stats Response:', response.data);
+      
+      if (response.data.success) {
+        setTeacherStats(response.data.data);
+      }
+    } catch (error) {
+      console.error('❌ Failed to load teacher stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load stats on mount and when role changes
+  useEffect(() => {
+    if (isTeacher) {
+      loadTeacherStats();
+    }
+  }, [isTeacher]);
+
+  // Refresh handler
+  const handleRefresh = async () => {
     setRefreshing(true);
-    // Simulate refresh - in real app, you might reload data here
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
+    await loadTeacherStats();
+    setRefreshing(false);
   };
 
   return (
@@ -33,6 +76,20 @@ const HomeScreen: React.FC = () => {
         <Text style={styles.helloText}>
           {t('common.hello', { defaultValue: 'Hello' })}, {user?.name?.split(' ')[0] || 'User'} 👋
         </Text>
+        <TouchableOpacity
+          style={styles.notificationButton}
+          onPress={() => navigation.navigate('Notifications' as never)}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.notificationIcon}>🔔</Text>
+          {unreadCount > 0 && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
 
       <ScrollView 
@@ -143,11 +200,15 @@ const HomeScreen: React.FC = () => {
               <Text style={styles.sectionTitle}>Your Overview</Text>
               <View style={styles.statsGrid}>
                 <View style={styles.statCard}>
-                  <Text style={styles.statValue}>0</Text>
+                  <Text style={styles.statValue}>
+                    {loading ? '...' : teacherStats.activeStudents}
+                  </Text>
                   <Text style={styles.statLabel}>Active Students</Text>
                 </View>
                 <View style={styles.statCard}>
-                  <Text style={styles.statValue}>0</Text>
+                  <Text style={styles.statValue}>
+                    {loading ? '...' : teacherStats.lessonRequests}
+                  </Text>
                   <Text style={styles.statLabel}>Lesson Requests</Text>
                 </View>
               </View>
