@@ -1,9 +1,10 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTranslation } from 'react-i18next';
 import { MainTabParamList } from '../types';
 import { COLORS } from '../constants';
+import { useUnreadMessages } from '../contexts/UnreadMessagesContext';
 
 // Import screens
 import HomeScreen from '../screens/main/HomeScreen/HomeScreen';
@@ -34,6 +35,7 @@ const getTabIcon = (routeName: string, focused: boolean) => {
 
 export const MainNavigator: React.FC = () => {
   const { t } = useTranslation();
+  const { unreadMessagesCount } = useUnreadMessages();
 
   return (
     <Tab.Navigator
@@ -75,7 +77,20 @@ export const MainNavigator: React.FC = () => {
       <Tab.Screen 
         name="Messages" 
         component={MessagesScreen}
-        options={{ title: t('navigation.messages') }}
+        options={{ 
+          title: t('navigation.messages'),
+          tabBarBadge: unreadMessagesCount > 0 ? unreadMessagesCount : undefined,
+          tabBarBadgeStyle: {
+            backgroundColor: COLORS.error || '#FF3B30',
+            color: COLORS.white || '#FFFFFF',
+            fontSize: 10,
+            minWidth: 18,
+            height: 18,
+            borderRadius: 9,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }
+        }}
       />
       <Tab.Screen 
         name="Requests" 

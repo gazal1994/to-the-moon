@@ -5,17 +5,17 @@ import { I18nextProvider } from 'react-i18next';
 
 import { store } from './src/store';
 import { RootNavigator } from './src/navigation/RootNavigator';
-import { LanguageProvider } from './src/contexts';
-import { UserProvider } from './src/contexts/UserContext';
+import { LanguageProvider, NotificationProvider, UserProvider, UnreadMessagesProvider } from './src/contexts';
+import { SocketProvider } from './src/contexts/SocketContext';
 import i18n from './src/i18n';
 
-// Suppress SSRProvider warnings in React 18
+// Suppress SSRProvider warnings in React 18 (dev only)
 if (__DEV__) {
   const originalWarn = console.warn;
   console.warn = (...args) => {
     if (
-      args[0] && 
-      typeof args[0] === 'string' && 
+      args[0] &&
+      typeof args[0] === 'string' &&
       args[0].includes('SSRProvider')
     ) {
       return;
@@ -30,9 +30,15 @@ export default function App() {
       <I18nextProvider i18n={i18n}>
         <LanguageProvider>
           <UserProvider>
-            <SafeAreaProvider>
-              <RootNavigator />
-            </SafeAreaProvider>
+            <SocketProvider>
+              <NotificationProvider>
+                <UnreadMessagesProvider>
+                  <SafeAreaProvider>
+                    <RootNavigator />
+                  </SafeAreaProvider>
+                </UnreadMessagesProvider>
+              </NotificationProvider>
+            </SocketProvider>
           </UserProvider>
         </LanguageProvider>
       </I18nextProvider>

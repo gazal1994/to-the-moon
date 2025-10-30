@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { StorageService } from '../utils';
 import { apiClient } from '../services/apiClient';
+//import { initializePushNotifications } from '../services/notificationService';
 
 interface User {
   id: string;
@@ -61,6 +62,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         // Update state and storage
         setUser(userData);
         await StorageService.setUser(userData);
+        
+        // Initialize push notifications after successful login
+    //    await initializePushNotifications();
       } else {
         console.log('⚠️ Failed to load user from API');
         // If API fails but we have stored user, keep using it

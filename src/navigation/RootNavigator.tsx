@@ -15,6 +15,8 @@ import ChatScreen from '../screens/main/ChatScreen/ChatScreen';
 import EditProfileScreen from '../screens/main/EditProfileScreen/EditProfileScreen';
 import UserProfileScreen from '../screens/main/UserProfileScreen/UserProfileScreen';
 import HelpSupportScreen from '../screens/main/HelpSupportScreen/HelpSupportScreen';
+import AvailabilityScreen from '../screens/main/AvailabilityScreen/AvailabilityScreen';
+import NotificationsScreen from '../screens/main/NotificationsScreen/NotificationsScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -117,6 +119,22 @@ export const RootNavigator: React.FC = () => {
             options={{
               headerShown: false,
               title: 'Help & Support',
+            }}
+          />
+          <Stack.Screen 
+            name="Availability" 
+            component={AvailabilityScreen}
+            options={{
+              headerShown: false,
+              title: 'Manage Availability',
+            }}
+          />
+          <Stack.Screen 
+            name="Notifications" 
+            component={NotificationsScreen}
+            options={{
+              headerShown: false,
+              title: 'Notifications',
             }}
           />
         </Stack.Group>

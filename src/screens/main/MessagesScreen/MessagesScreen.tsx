@@ -16,6 +16,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { apiClient } from '../../../services/apiClient';
 import { useUser } from '../../../contexts/UserContext';
+import { useSocket } from '../../../contexts/SocketContext';
+import { useUnreadMessages } from '../../../contexts/UnreadMessagesContext';
 import { styles } from './MessagesScreen.styles';
 
 type MessagesScreenRouteProp = RouteProp<
@@ -54,6 +56,8 @@ interface Message {
 
 const MessagesScreen: React.FC = () => {
   const { user } = useUser();
+  const { socket, connected, onMessage, offMessage } = useSocket();
+  const { refreshUnreadCount } = useUnreadMessages();
   const route = useRoute<MessagesScreenRouteProp>();
   const navigation = useNavigation();
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -64,9 +68,113 @@ const MessagesScreen: React.FC = () => {
   const [sendingMessage, setSendingMessage] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
+  // Load conversations on mount
   useEffect(() => {
     loadConversations();
   }, []);
+
+  // Refresh conversations when screen comes into focus
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      console.log('📱 MessagesScreen focused - refreshing conversations');
+      loadConversationsSilently();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  // Set up polling as fallback when Socket.IO is not connected
+  useEffect(() => {
+    // If Socket.IO is connected, don't use polling
+    if (socket && connected) {
+      return;
+    }
+
+    // Use polling if Socket.IO is not available
+    console.log('ℹ️  Using HTTP polling for conversations (Socket.IO not connected)');
+    const pollInterval = setInterval(() => {
+      loadConversationsSilently();
+    }, 5000);
+
+    return () => {
+      clearInterval(pollInterval);
+    };
+  }, [socket, connected]);
+
+  // Set up WebSocket listener for conversation updates (when available)
+  useEffect(() => {
+    if (!socket || !connected) {
+      console.log('⚠️ WebSocket not available for MessagesScreen');
+      return;
+    }
+
+    console.log('✅ WebSocket connected - MessagesScreen will receive real-time updates');
+
+    const handleSocketMessage = (payload: any) => {
+      const { event, data } = payload;
+
+      if (event === 'conversation_updated') {
+        console.log('🔄 Conversation updated via WebSocket:', data);
+        
+        // Update conversation in real-time
+        setConversations(prev => {
+          const index = prev.findIndex(c => c.id === data.conversationId);
+          if (index >= 0) {
+            const updated = [...prev];
+            updated[index] = {
+              ...updated[index],
+              lastMessage: data.lastMessage || updated[index].lastMessage,
+              lastMessageAt: data.lastMessageAt || new Date().toISOString(),
+              unreadCount: data.unreadCount ?? updated[index].unreadCount
+            };
+            // Move to top
+            updated.unshift(updated.splice(index, 1)[0]);
+            return updated;
+          }
+          return prev;
+        });
+      } else if (event === 'receive_message') {
+        console.log('📩 New message received via WebSocket, updating conversations');
+        
+        // Update the conversation with the new message
+        setConversations(prev => {
+          const conversationId = data.senderId === user?.id ? data.receiverId : data.senderId;
+          const index = prev.findIndex(c => c.id === conversationId);
+          
+          if (index >= 0) {
+            const updated = [...prev];
+            updated[index] = {
+              ...updated[index],
+              lastMessage: data.content,
+              lastMessageAt: data.createdAt || new Date().toISOString(),
+              unreadCount: data.senderId !== user?.id ? (updated[index].unreadCount || 0) + 1 : updated[index].unreadCount || 0
+            };
+            // Move to top
+            updated.unshift(updated.splice(index, 1)[0]);
+            return updated;
+          } else {
+            // New conversation - refresh the list
+            loadConversationsSilently();
+          }
+          return prev;
+        });
+      } else if (event === 'messages_read') {
+        console.log('✅ Messages marked as read via WebSocket');
+        
+        // Reset unread count for this conversation
+        setConversations(prev => prev.map(c => 
+          c.id === data.userId ? { ...c, unreadCount: 0 } : c
+        ));
+      }
+    };
+
+    // Register listener
+    onMessage(handleSocketMessage);
+
+    return () => {
+      offMessage(handleSocketMessage);
+    };
+  }, [socket, connected, user?.id]);
 
   // Handle opening conversation from navigation params
   useEffect(() => {
@@ -118,6 +226,38 @@ const MessagesScreen: React.FC = () => {
     }
   };
 
+  const loadConversationsSilently = async () => {
+    try {
+      // Don't update if currently loading or refreshing
+      if (loading || refreshing) return;
+
+      const response = await apiClient.get('/messages/conversations');
+      
+      if (response.success && response.data) {
+        const conversationsData = response.data as any[];
+        
+        const formattedConversations = conversationsData.map((conv: any) => ({
+          id: String(conv.id),
+          participants: conv.participants || [],
+          lastMessage: String(conv.lastMessage || ''),
+          lastMessageAt: String(conv.lastMessageAt || new Date().toISOString()),
+          otherUser: {
+            id: String(conv.otherUser?.id || ''),
+            name: String(conv.otherUser?.name || 'Unknown'),
+            avatar: conv.otherUser?.avatar || conv.otherUser?.avatarUrl,
+            role: String(conv.otherUser?.role || '')
+          },
+          unreadCount: conv.unreadCount || 0
+        }));
+        
+        setConversations(formattedConversations);
+      }
+    } catch (error) {
+      // Silently fail for background polling
+      console.log('Background polling error:', error);
+    }
+  };
+
   const loadMessages = async (conversationId: string | number) => {
     try {
       console.log('📨 Loading messages for conversation:', conversationId);
@@ -164,6 +304,8 @@ const MessagesScreen: React.FC = () => {
   const markAsRead = async (messageId: string | number) => {
     try {
       await apiClient.patch(`/messages/${messageId}/read`);
+      // Refresh unread messages count
+      refreshUnreadCount();
     } catch (error) {
       console.error('Failed to mark message as read:', error);
     }
@@ -214,7 +356,12 @@ const MessagesScreen: React.FC = () => {
   };
 
   const openConversation = (conversation: Conversation) => {
-    // Navigate to Chat screen instead of opening inline
+    // Reset unread count immediately for better UX
+    setConversations(prev => prev.map(c => 
+      c.id === conversation.id ? { ...c, unreadCount: 0 } : c
+    ));
+    
+    // Navigate to Chat screen
     navigation.navigate('Chat' as never, {
       userId: conversation.otherUser.id,
       userName: conversation.otherUser.name,
