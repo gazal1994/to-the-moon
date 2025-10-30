@@ -57,7 +57,7 @@ interface Message {
 const MessagesScreen: React.FC = () => {
   const { user } = useUser();
   const { socket, connected, onMessage, offMessage } = useSocket();
-  const { refreshUnreadCount } = useUnreadMessages();
+  const { refreshUnreadCount, clearUnreadCount } = useUnreadMessages();
   const route = useRoute<MessagesScreenRouteProp>();
   const navigation = useNavigation();
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -78,6 +78,8 @@ const MessagesScreen: React.FC = () => {
     const unsubscribe = navigation.addListener('focus', () => {
       console.log('📱 MessagesScreen focused - refreshing conversations');
       loadConversationsSilently();
+      // Clear badge immediately when user opens Messages screen
+      clearUnreadCount();
     });
 
     return unsubscribe;

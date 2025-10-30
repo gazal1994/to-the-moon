@@ -6,6 +6,7 @@ import { useUser } from './UserContext';
 interface UnreadMessagesContextType {
   unreadMessagesCount: number;
   refreshUnreadCount: () => Promise<void>;
+  clearUnreadCount: () => void;
 }
 
 const UnreadMessagesContext = createContext<UnreadMessagesContextType | undefined>(undefined);
@@ -30,6 +31,11 @@ export const UnreadMessagesProvider: React.FC<{ children: ReactNode }> = ({ chil
   // Refresh unread count (public method)
   const refreshUnreadCount = async () => {
     await fetchUnreadCount();
+  };
+
+  // Clear unread count immediately (for UX - clears badge when user opens Messages screen)
+  const clearUnreadCount = () => {
+    setUnreadMessagesCount(0);
   };
 
   // Initial load
@@ -77,7 +83,7 @@ export const UnreadMessagesProvider: React.FC<{ children: ReactNode }> = ({ chil
   }, [socket, connected, user]);
 
   return (
-    <UnreadMessagesContext.Provider value={{ unreadMessagesCount, refreshUnreadCount }}>
+    <UnreadMessagesContext.Provider value={{ unreadMessagesCount, refreshUnreadCount, clearUnreadCount }}>
       {children}
     </UnreadMessagesContext.Provider>
   );
