@@ -42,14 +42,17 @@ const HomeScreen: React.FC = () => {
     
     try {
       setLoading(true);
-      const response = await apiClient.get('/teachers/dashboard/stats');
-      console.log('📊 Teacher Stats Response:', response.data);
+      const response = await apiClient.get<TeacherStats>('/teachers/dashboard/stats');
+      console.log('📊 Teacher Stats Response:', response);
       
-      if (response.data.success) {
-        setTeacherStats(response.data.data);
+      if (response?.success && response?.data) {
+        setTeacherStats(response.data);
+      } else {
+        console.error('❌ Invalid response format:', response);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Failed to load teacher stats:', error);
+      console.error('Error details:', error.response?.data || error.message);
     } finally {
       setLoading(false);
     }
