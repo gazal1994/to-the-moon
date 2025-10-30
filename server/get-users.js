@@ -1,4 +1,5 @@
-const { sequelize, User } = require('./src/models');
+const { sequelize } = require('./src/config/database');
+const { User } = require('./src/models');
 
 async function getUsers() {
   try {
