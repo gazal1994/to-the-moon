@@ -1,7 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { Op } = require('sequelize');
-const { User, TeacherProfile, TeacherAvailability } = require('../models');
+const { User, TeacherProfile, TeacherAvailability, LessonRequest } = require('../models');
 const { authenticate, authorize } = require('../middleware/auth');
 
 const router = express.Router();
@@ -75,6 +75,71 @@ router.get('/me', authenticate, authorize('teacher'), async (req, res) => {
     });
   } catch (error) {
     console.error('Get teacher profile error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error'
+    });
+  }
+});
+
+// GET /api/teachers/dashboard/stats - Get teacher dashboard statistics
+router.get('/dashboard/stats', authenticate, authorize('teacher'), async (req, res) => {
+  try {
+    const teacherId = req.user.id;
+
+    // Count active students (students with accepted lesson requests)
+    const activeStudentsCount = await LessonRequest.count({
+      where: {
+        teacherId,
+        status: 'accepted'
+      },
+      distinct: true,
+      col: 'student_id'
+    });
+
+    // Count pending lesson requests
+    const pendingRequestsCount = await LessonRequest.count({
+      where: {
+        teacherId,
+        status: 'pending'
+      }
+    });
+
+    // Count total lesson requests (all statuses)
+    const totalRequestsCount = await LessonRequest.count({
+      where: {
+        teacherId
+      }
+    });
+
+    // Count accepted lesson requests
+    const acceptedRequestsCount = await LessonRequest.count({
+      where: {
+        teacherId,
+        status: 'accepted'
+      }
+    });
+
+    // Count completed lessons
+    const completedLessonsCount = await LessonRequest.count({
+      where: {
+        teacherId,
+        status: 'completed'
+      }
+    });
+
+    res.json({
+      success: true,
+      data: {
+        activeStudents: activeStudentsCount,
+        lessonRequests: pendingRequestsCount,
+        totalRequests: totalRequestsCount,
+        acceptedRequests: acceptedRequestsCount,
+        completedLessons: completedLessonsCount
+      }
+    });
+  } catch (error) {
+    console.error('Get teacher dashboard stats error:', error);
     res.status(500).json({
       success: false,
       error: 'Internal server error'
