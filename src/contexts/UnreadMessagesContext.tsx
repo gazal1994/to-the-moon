@@ -49,25 +49,29 @@ export const UnreadMessagesProvider: React.FC<{ children: ReactNode }> = ({ chil
   useEffect(() => {
     if (!socket || !connected) return;
 
-    const handleNewMessage = (data: any) => {
-      // Only increment if the message is for the current user
-      if (data.receiverId === user?.id) {
-        setUnreadMessagesCount(prev => prev + 1);
+    const handleSocketMessage = (messageData: any) => {
+      const { event, data } = messageData;
+      
+      // Handle new_message event
+      if (event === 'new_message') {
+        // Only increment if the message is for the current user
+        if (data.receiverId === user?.id) {
+          setUnreadMessagesCount(prev => prev + 1);
+        }
+      }
+      
+      // Handle messages_read event
+      if (event === 'messages_read') {
+        // Refresh count when messages are marked as read
+        fetchUnreadCount();
       }
     };
 
-    const handleMessageRead = () => {
-      // Refresh count when messages are marked as read
-      fetchUnreadCount();
-    };
-
     // Subscribe to socket events
-    onMessage('new_message', handleNewMessage);
-    onMessage('messages_read', handleMessageRead);
+    onMessage(handleSocketMessage);
 
     return () => {
-      offMessage('new_message', handleNewMessage);
-      offMessage('messages_read', handleMessageRead);
+      offMessage(handleSocketMessage);
     };
   }, [socket, connected, user]);
 
