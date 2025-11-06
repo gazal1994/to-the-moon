@@ -209,9 +209,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         
         // Calculate days until target day
         let daysUntil = targetDay - currentDay;
-        if (daysUntil <= 0) {
+        if (daysUntil < 0) {
           daysUntil += 7; // Next week
         }
+        // If daysUntil is 0, it means today - don't add 7 days
         
         const targetDate = new Date(today);
         targetDate.setDate(today.getDate() + daysUntil);
